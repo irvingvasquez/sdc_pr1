@@ -63,7 +63,7 @@ def process_image(image):
     cv2.fillPoly(mask, vertices, ignore_mask_color)
     edges = cv2.bitwise_and(edges, mask)
 
-
+    # maximun slope for a line
     slope_threshold = 0.5;
     
     m_left = [];
@@ -142,11 +142,9 @@ def process_image(image):
                         m_right = m_right + [slope]
                         xr = xr + [((imshape[0]-y1)/slope+x1)]
             
-    # Create a "color" binary image to combine with line image
-    #color_edges = np.dstack((edges, edges, edges)) 
+    #Calculate the mean of all lines
     
     mlm, xlm, mrm, xrm = mean_line(m_left, xl, m_right, xr)
-    
     if len(m_left)>0:
            x1,y1,x2,y2 = points_of_line(mlm,xlm,imshape[0])
            cv2.line(image2show,(x1,y1),(x2,y2),(255,255,0),3)
@@ -166,12 +164,12 @@ def process_image(image):
     return result
 
 
-white_output = 'test_videos_output/challenge.mp4'
+white_output = 'test_videos_output/solidYellowLeft_interp.mp4'
 ## To speed up the testing process you may want to try your pipeline on a shorter subclip of the video
 ## To do so add .subclip(start_second,end_second) to the end of the line below
 ## Where start_second and end_second are integer values representing the start and end of the subclip
 ## You may also uncomment the following line for a subclip of the first 5 seconds
 ##clip1 = VideoFileClip("test_videos/solidWhiteRight.mp4").subclip(0,5)
-clip1 = VideoFileClip("test_videos/challenge.mp4")
+clip1 = VideoFileClip("test_videos/solidYellowLeft.mp4")
 white_clip = clip1.fl_image(process_image) #NOTE: this function expects color images!!
 white_clip.write_videofile(white_output, audio=False)
